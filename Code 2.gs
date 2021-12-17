@@ -36,38 +36,6 @@ function prosesPesan(update) {
       var h = 11111111;
       var banned = 1005235304;
 
-      if (/^\/info$/i.exec(msg.text)) {
-        if (msg.from.id == h) {
-          var pesan = "Info about you\n\nName: " + n + "\nID: <code>" + userid + "</code>\nUsername: @" + username + "\nStatus: Banned\n   └ Until: 14/10/21 : 20.00 WIB"
-          var keyb = []
-
-          keyb[0] = [
-            tg.button.url('Request Unban', 'https://docs.google.com/forms/d/e/1FAIpQLSdsQqzLLbZNqcfXKFsmTeGyJd0p1Kn_Ha748hhk8OhAPPGnGQ/viewform?usp=sf_link')
-          ]
-
-          tg.sendMsgKeyboardInline(msg, pesan, keyb, 'html', true, msg.message_id)
-        } else {
-          return tg.sendMsg(msg, "You not banned by admin. Stay save!", 'html', false, msg.message_id)
-        }
-      }
-    }
-
-    if (msg.from.id !== h) {
-    } else {
-      tg.sendMsg(msg, "⚠️ You banned by admin, you cannot using this bot | <a href='https://www.jevrinsupport.ml/2021/09/blocked-by-admin.html'>Why?</a>\nUse /info to see your status.", 'html', true);
-      return true;
-    }
-
-    if (msg.chat.id !== 0) {
-    } else {
-      tg.sendMsg(msg, "Sepertinya grup ini masuk dalam daftar blokir 🤔, anda tidak dapat menggunakan saya", 'html');
-      return tg.leaveChat(msg.chat.id)
-    }
-
-    if (/dbhbdkBSAkbsbbASHBdkBSkhbsbAVvHAHKVVvsvISVVh$/i.exec(msg.text)) {
-      return tg.kirimPesan(msg.chat.id, 'Terimakasih karena telah menambahkan saya, saya adalah bot truth or dare. Untuk menggunakan ketik\n/truth - kejujuran\n/dare - tantangan', 'HTML');
-    }
-
     // if user press start:
     var pola = /\/start/i
     if (pola.exec(msg.text)) {
@@ -94,6 +62,7 @@ function prosesPesan(update) {
       alert += "\nID: <code>" + userid + "</code>"
       return tg.sendMessage(1281755925, alert, 'html')
     }
+  }
 
     var user = new jevrin.user();
 
