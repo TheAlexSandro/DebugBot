@@ -26,14 +26,14 @@ function prosesCallback(cb) {
     var keyboard = []
 
     keyboard[0] = [
-      tg.button.text('❔How to use', 'how')
+       tg.button.text('❔How to use', 'how')
     ]
     keyboard[1] = [
-      tg.button.url('🆘 Support Bot', 'https://t.me/JGCHBot'),
-      tg.button.url('📣 Channel', 'https://t.me/JevrinBio')
+       tg.button.url('🆘 Support Bot', 'https://t.me/JGCHBot'),
+       tg.button.url('🗂 Open Source', 'https://github.com/Jevrin/DebugBot')
     ]
     keyboard[2] = [
-      tg.button.url('🌐 Website', 'https://www.jevrinsupport.ml')
+       tg.button.url('🌐 Website', 'https://wwww.jevrinsupport.ml')
     ]
     var keyb = { inline_keyboard: keyboard }
 
