@@ -46,13 +46,16 @@ function prosesPesan(update) {
 
         var keyboard = []
 
-        keyboard[0] = [
+       keyboard[0] = [
           tg.button.text('❔How to use', 'how')
-        ]
-        keyboard[1] = [
+       ]
+       keyboard[1] = [
           tg.button.url('🆘 Support Bot', 'https://t.me/JGCHBot'),
-          tg.button.url('🗂 Open Source', 'https://github.com/Jevrin/MediaChecker')
-        ]
+          tg.button.url('🗂 Open Source', 'https://github.com/Jevrin/DebugBot')
+       ]
+       keyboard[2] = [
+          tg.button.url('🌐 Website', 'https://wwww.jevrinsupport.ml')
+       ]
 
        return tg.sendMessageKeyboardInline(msg.chat.id, pesan, keyboard, 'HTML', true, msg.message_id)
     }
