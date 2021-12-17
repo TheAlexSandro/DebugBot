@@ -42,7 +42,6 @@ function prosesPesan(update) {
       var nama = msg.from.first_name
       var userid = msg.from.id;
       
-      try {
         var pesan = '👋 Hello <a href="tg://user?id=' + userid + '">' + tg.util.clearHTML(nama) + '</a> Im a Debug Bot, For instructions, please press the "How to use ❔" button and enjoy.'
 
         var keyboard = []
@@ -55,12 +54,7 @@ function prosesPesan(update) {
           tg.button.url('🗂 Open Source', 'https://github.com/Jevrin/MediaChecker')
         ]
 
-        tg.sendMessageKeyboardInline(msg.chat.id, pesan, keyboard, 'HTML', true, msg.message_id)
-      } catch (e) { }
-      var alert = "Ada yg akses aku:"
-      alert += "\nNama: <a href='tg://user?id=" + userid + "'>" + nama + "</a>"
-      alert += "\nID: <code>" + userid + "</code>"
-      return tg.sendMessage(1281755925, alert, 'html')
+       return tg.sendMessageKeyboardInline(msg.chat.id, pesan, keyboard, 'HTML', true, msg.message_id)
     }
   }
 
