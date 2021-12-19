@@ -89,26 +89,31 @@ function prosesPesan(update) {
       return tg.sendMsg(msg, pesan, 'html')
     }
 
+    /**************************** AWAL BAGIAN CEK MESSAGE INFO ****************************/
+
     var pola = /^\/msgid$/i
     if (pola.exec(msg.text)) {
-      if (msg.reply_to_message) {
-        var msgr = msg.reply_to_message;
-        var msgid = msgr.message_id;
-        var pesan = "🆔 Message ID: <code>" + msgid + "</code>"
-        return tg.sendMsg(msg, pesan, 'html')
+      if (!msg.reply_to_message) return tg.sendMsg(msg, "⚠️ Must reply message.")
+      var msgr = msg.reply_to_message;
+
+      if (!msgr.text) return tg.sendMsg(msg, "❌ Error: <code>Text is not defined</code>", 'html', true)
+      var msgid = msgr.message_id;
+      var char = msgr.text.length;
+      
+      try {
+        tg.sendMsg(msg, "🆔 Message ID: <code>" + msgid + "</code>\n📐 Character: <code>" + char + "</code>", 'html', true)
+      } catch (e) {
+        var pesanError = e.message;
+
+        if (error = /({(?:.*)})/gmi.exec(pesanError))
+          pesanError = error[1];
+
+        tg.sendMsg(msg, '⛔️ ERROR: ' + pesanError, false, false, msg.message_id);
       }
+      return;
     }
 
-    if (/^\/msgid$/i.exec(msg.text)) {
-      var pesan = "⚠️ Must reply message."
-      var keyb = []
-
-      keyb[0] = [
-        tg.button.text('OK ✅', 'me_ok')
-      ]
-
-      return tg.sendMsgKeyboardInline(msg, pesan, keyb, 'html', true)
-    }
+    /**************************** AKHIR BAGIAN CEK MESSAGE INFO ****************************/
 
     var pola = /^\/help$/i
     if (pola.exec(msg.text)) {
