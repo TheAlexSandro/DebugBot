@@ -8,9 +8,14 @@ function prosesCallback(cb) {
     return tg.deleteMessage(chatID, msg.message_id)
   }
 
-  if (/how$/i.exec(cb.data)) {
-    var pesan = "How to use this bot?"
-    pesan += "\nTo use me, send: text, photo, video, video_note, document, audio/music, voice, dice, gif, sticker, game, location, poll and I'm going to convert it in JSON structure."
+  if (/help_sdedwbwdyud$/i.exec(cb.data)) {
+    var pesan = "<b>Help</b>"
+    pesan += "\nHow to use this bot?\nTo use me: send whatever it is and I'm going to convert it to a JSON structure."
+    pesan += "\n\nAny command:"
+    pesan += "\n/help - this command"
+    pesan += "\n/msgid - check message info"
+    pesan += "\n/pop - create your own popup"
+    pesan += "\n/about - about this bot"
     var keyb = { inline_keyboard: [[tg.button.text('⬅️ Back', 'start')]] }
 
     tg.editMessageText(chatID, msg.message_id, msg.inline_message_id, pesan, 'html', true, keyb)
@@ -21,19 +26,21 @@ function prosesCallback(cb) {
     var nama = cb.from.first_name
     var userid = cb.from.id;
 
-    var pesan = '👋 Hello <a href="tg://user?id=' + userid + '">' + tg.util.clearHTML(nama) + '</a> Im a Debug Bot, For instructions, please press the "How to use ❔" button and enjoy.'
+    var pesan = '👋 Hello <a href="tg://user?id=' + userid + '">' + tg.util.clearHTML(nama) + '</a> Im a Debug Bot, send me text or whatever and i will convert it to JSON structure, For more... press "How to use ❔" button.'
+    pesan += "\n\n<b><i>By using this bot you agree to this <a href='https://www.jevrinsupport.ml/p/privacy-policy-of-debug-bot.html'>Privacy Policy</a>.</i></b>"
 
     var keyboard = []
 
     keyboard[0] = [
-       tg.button.text('❔How to use', 'how')
+      tg.button.text('❔How to use', 'help_sdedwbwdyud')
     ]
+    
     keyboard[1] = [
-       tg.button.url('🆘 Support Bot', 'https://t.me/JGCHBot'),
-       tg.button.url('🗂 Open Source', 'https://github.com/Jevrin/DebugBot')
+      tg.button.url('🆘 Support Bot', 'https://t.me/JGCHBot'),
+      tg.button.url('🗂 Open Source', 'https://github.com/Jevrin/DebugBot')
     ]
     keyboard[2] = [
-       tg.button.url('🌐 Website', 'https://wwww.jevrinsupport.ml')
+      tg.button.url('🌐 Website', 'https://wwww.jevrinsupport.ml')
     ]
     var keyb = { inline_keyboard: keyboard }
 
@@ -429,11 +436,63 @@ function prosesCallback(cb) {
 
   /****************** END OF HANDEL TEXT ******************/
 
-  if (/me_ok$/i.exec(cb.data)){
-    var pesan = "⚠️ Must reply message."
+  if (/view_pop$/i.exec(cb.data)) {
+    var popup = user.getValue('popup_'+msg.chat.id)
+    try {
+      tg.answerCallbackQuery(cb.id, ""+popup, true)
+  } catch(e) {
+    var pesanError = e.message;
+
+    if (error = /({(?:.*)})/gmi.exec(pesanError))
+      pesanError = error[1];
+
+    var psnErr = "❌ Error: <code>"+pesanError+"</code>"
+    var keyb = []
+
+    keyb[0] = [
+      tg.button.text('👮 Report Error', 'sendError')
+    ]
+
+    user.setValue('bugError'+msg.chat.id, psnErr)
+
+    tg.sendMsgKeyboardInline(msg, psnErr, keyb, 'html', true)
+  }
+  return;
+}
+
+  if (/sendError$/i.exec(cb.data)) {
+    var logError = user.getValue('bugError'+chatID)
     
-    tg.request('answerCallbackQuery', { callback_query_id: cb.id, text: 'Oke....' });
-    return tg.editMessageText(chatID, msg.message_id, msg.inline_message_id, pesan, 'html', true)
+    var pesan = "Ada laporan error dari:"
+    pesan += "\n\nNama: <a href='tg://user?id="+iduser+"'>"+nn+"</a>"
+    pesan += "\nID: <code>"+iduser+"</code>"
+    pesan += "\nIsi laporan:"
+    pesan += "\n\n<code>"+logError+"</code>"
+    var keyb = []
+
+    keyb[0] = [
+      tg.button.text('❌ Tolak', 'closeWindow'),
+      tg.button.text('✅ Terima', 'me_accept')
+    ]
+
+    var psn = ""+logError
+    var keybMsg = { inline_keyboard: [[tg.button.text('👮 Report Error', 'failedErr')]] }
+
+    tg.sendMessageKeyboardInline(adminBot, pesan, keyb, 'html', true)
+    tg.answerCallbackQuery(cb.id, "✅ Your report have been sent. Now that your report is being moderated", true)
+    tg.editMessageText(chatID, msg.message_id, msg.inline_message_id, psn, 'html', true, keybMsg)
+    return;
+  }
+
+  if (/failedErr$/i.exec(cb.data)) {
+    return tg.answerCallbackQuery(cb.id, "Don't click again 🤦‍♂️", true)
+  }
+
+  if (/me_accept$/i.exec(cb.data)) { 
+    var pesan = "<code>We have received your report, we will fix it immediately.</code>"
+
+    tg.request('answerCallbackQuery', { callback_query_id: cb.id, text: '' });
+    return tg.sendMessage(adminBot, pesan, 'html', true)
   }
 
 }
