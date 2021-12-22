@@ -61,8 +61,6 @@ function prosesPesan(update) {
     }
   }
 
-    var user = new jevrin.user();
-
     var pola = /^\/about$/i
     if (pola.exec(msg.text)) {
       var pesan = 'I am a Debug bot you can use to check JSON structure of the file/media/text that you have sent. Send /help for more, I made using JavaScript with Library V10.'
@@ -83,13 +81,9 @@ function prosesPesan(update) {
       return tg.sendMsgKeyboardInline(msg, pesan, keyb, 'html')
     }
 
-    var pola = /^\/report$/i
-    if (pola.exec(msg.text)) {
-      var pesan = "If you find a bug or error in this bot, you can report it to @JGCHBot"
-      return tg.sendMsg(msg, pesan, 'html')
-    }
+    /**************************** AWAL BAGIAN CEK ****************************/
 
-    /**************************** AWAL BAGIAN CEK MESSAGE INFO ****************************/
+    var user = new jevrin.user();
 
     var pola = /^\/msgid$/i
     if (pola.exec(msg.text)) {
@@ -101,33 +95,115 @@ function prosesPesan(update) {
       var char = msgr.text.length;
       
       try {
-        tg.sendMsg(msg, "🆔 Message ID: <code>" + msgid + "</code>\n📐 Character: <code>" + char + "</code>", 'html', true)
+        var pesan = "├──「 ℹ️ Information"
+        pesan += "\n│"
+        pesan += `\n├• 📆 Date: <code>${dateCon(msgr.date, true)}</code>`
+        pesan += `\n├• 🕒 Time: <code>${timeConverter(msgr.date, true)}</code>`
+        pesan += "\n├• 🆔 Message ID: <code>" + msgid + "</code>"
+        pesan += "\n└• 📐 Character: <code>" + char + "</code>"
+        
+        tg.sendMsg(msg, pesan, 'html', true)
       } catch (e) {
         var pesanError = e.message;
 
         if (error = /({(?:.*)})/gmi.exec(pesanError))
           pesanError = error[1];
 
-        tg.sendMsg(msg, '⛔️ ERROR: ' + pesanError, false, false, msg.message_id);
+        var psnErr = "❌ Error: <code>"+pesanError+"</code>"
+        var keyb = []
+
+        keyb[0] = [
+          tg.button.text('👮 Report Error', 'sendError')
+        ]
+
+        user.setValue('bugError'+msg.chat.id, psnErr)
+
+        tg.sendMsgKeyboardInline(msg, psnErr, keyb, 'html', true)
       }
       return;
     }
 
-    /**************************** AKHIR BAGIAN CEK MESSAGE INFO ****************************/
+    if (cocok = /^([\/]pop+ )/i.exec(msg.text)) {
+      var cck = msg.text.replace(cocok[1], '');
+      
+      try {
+        var pesan = "Here is the result of the popup that I have created."
+        var keyb = []
+
+        keyb[0] = [
+          tg.button.text('👀 View Popup', 'view_pop')
+        ]
+
+        user.setValue('popup_'+msg.chat.id, cck)
+
+        tg.sendMsgKeyboardInline(msg, pesan, keyb, 'html', true)
+      } catch(e) {
+        var pesanError = e.message;
+
+        if (error = /({(?:.*)})/gmi.exec(pesanError))
+          pesanError = error[1];
+
+        var psnErr = "❌ Error: <code>"+pesanError+"</code>"
+        var keyb = []
+
+        keyb[0] = [
+          tg.button.text('👮 Report Error', 'sendError')
+        ]
+
+        user.setValue('bugError'+msg.chat.id, psnErr)
+
+        tg.sendMsgKeyboardInline(msg, psnErr, keyb, 'html', true)
+      }
+      return;
+    }
+
+    var pola = /^\/pop$/i
+    if (pola.exec(msg.text)) {
+      var pesan = "⚠️ There is no text."
+      pesan += "\n\nEX: <code>/pop your message</code>"
+      return tg.sendMsg(msg, pesan, 'html', true)
+    }
+
+    /**************************** AKHIR BAGIAN CEK ****************************/
+
+    if (cocok = /^([\/]r+ )/i.exec(msg.text)) {
+     if (msg.from.id == 1281755925) {
+      if (msg.reply_to_message) {
+        var msgr = msg.reply_to_message;
+        var cck = msg.text.replace(cocok[1], '')
+      try {
+        var psn = "🔔 *NOTIFICATION*\n——————————\n"+msgr.text;
+        tg.sendMessage(cck, psn, 'Markdown')
+      } catch(e) {}
+      tg.sendMessage(adminBot, "Terkirim!")
+      return;
+    }
+  }
+}
 
     var pola = /^\/help$/i
     if (pola.exec(msg.text)) {
-      var pesan = "How to use this bot?"
-      pesan += "\nTo use me, send: text, photo, video, video_note, document, audio/music, voice, dice, gif, sticker, game, location, poll and I'm going to convert it in JSON structure."
-      return tg.sendMsg(msg, pesan, 'html')
+      var pesan = "<b>Help</b>"
+      pesan += "\nHow to use this bot?\nTo use me: send whatever it is and I'm going to convert it to a JSON structure."
+      pesan += "\n\nAny command:"
+      pesan += "\n/help - this command"
+      pesan += "\n/msgid - check message info"
+      pesan += "\n/pop - create your own popup"
+      pesan += "\n/about - about this bot"
+
+      return tg.sendMsg(msg, pesan, 'html', true)
     }
 
     if (msg.text) {
       var inf = msg;
       var txt = msg.text;
+      var tp = msg.chat.type;
       var js = JSON.stringify(inf, null, 2)
+
+    try {
       var pesan = "<code>" + js + "</code>"
       var psn = "📝 Text: <code>" + txt + "</code>"
+      psn += "\n🗂 Type: <code>" + tp + "</code>"
       var keyb = []
 
       keyb[0] = [
@@ -138,8 +214,26 @@ function prosesPesan(update) {
       user.setValue('json_txt' + msg.chat.id, js)
       user.setValue('html_txt' + msg.chat.id, psn)
 
-      return tg.sendMsgKeyboardInline(msg, pesan, keyb, 'html', true, msg.message_id)
+      tg.sendMsgKeyboardInline(msg, pesan, keyb, 'html', true, msg.message_id)
+    } catch(e) {
+      var pesanError = e.message;
+
+      if (error = /({(?:.*)})/gmi.exec(pesanError))
+        pesanError = error[1];
+
+      var psnErr = "❌ Error: <code>"+pesanError+"</code>"
+      var keyb = []
+
+      keyb[0] = [
+        tg.button.text('👮 Report Error', 'sendError')
+      ]
+      
+      user.setValue('bugError'+msg.chat.id, psnErr)
+
+      tg.sendMsgKeyboardInline(msg, psnErr, keyb, 'html', true)
     }
+   return;
+  }
 
     if (msg.photo) {
       var fileid = msg.photo[0].file_id;
@@ -150,11 +244,12 @@ function prosesPesan(update) {
       var pht = msg.photo[0];
       var js = JSON.stringify(pht, null, 2);
 
+    try {
       var psn = "<code>" + js + "</code>"
       var pesan = "ℹ️ Information"
       pesan += "\n\n🆔 File ID: <code>" + fileid + "</code>"
       pesan += "\n🔰 Unique ID: <code>" + unique + "</code>"
-      pesan += "\n🗃 Size: <code>" + size + " KB</code>"
+      pesan += "\n🗃 Size: <code>" + size + " B</code>"
       pesan += "\n🗂 Type: <code>photo</code>"
       pesan += "\n📏 Width: <code>" + width + "</code>"
       pesan += "\n └ Height: <code>" + height + "</code>"
@@ -168,8 +263,26 @@ function prosesPesan(update) {
       user.setValue('json_' + msg.chat.id, js)
       user.setValue('psn_' + msg.chat.id, pesan)
 
-      return tg.sendMsgKeyboardInline(msg, psn, keyb, 'html', true, msg.message_id)
+      tg.sendMsgKeyboardInline(msg, psn, keyb, 'html', true, msg.message_id)
+    } catch(e) {
+      var pesanError = e.message;
+
+      if (error = /({(?:.*)})/gmi.exec(pesanError))
+        pesanError = error[1];
+
+      var psnErr = "❌ Error: <code>"+pesanError+"</code>"
+      var keyb = []
+
+      keyb[0] = [
+        tg.button.text('👮 Report Error', 'sendError')
+      ]
+
+      user.setValue('bugError'+msg.chat.id, psnErr)
+
+      tg.sendMsgKeyboardInline(msg, psnErr, keyb, 'html', true)
     }
+    return;
+  } 
 
     if (msg.sticker) {
       var fileid = msg.sticker.file_id;
@@ -183,11 +296,12 @@ function prosesPesan(update) {
       var pht = msg.sticker;
       var js = JSON.stringify(pht, null, 2);
 
+    try {
       var psn = "<code>" + js + "</code>"
       var pesan = "ℹ️ Information"
       pesan += "\n\n🆔 File ID: <code>" + fileid + "</code>"
       pesan += "\n🔰 Unique ID: <code>" + unique + "</code>"
-      pesan += "\n🗃 Size: <code>" + size + " KB</code>"
+      pesan += "\n🗃 Size: <code>" + size + " B</code>"
       pesan += "\n📇 Name: <code>" + setname + "</code>"
       pesan += "\n👻 Emoji: <code>" + emoji + "</code>"
       pesan += "\n🌥 Animated: <code>" + anim + "</code>"
@@ -209,8 +323,26 @@ function prosesPesan(update) {
       user.setValue('psn_stic' + msg.chat.id, pesan)
       user.setValue('stt_' + msg.chat.id, stt)
 
-      return tg.sendMessageKeyboardInline(msg.chat.id, psn, keyb, 'html', true, msg.message_id)
+      tg.sendMessageKeyboardInline(msg.chat.id, psn, keyb, 'html', true, msg.message_id)
+    } catch(e) {
+      var pesanError = e.message;
+
+      if (error = /({(?:.*)})/gmi.exec(pesanError))
+        pesanError = error[1];
+
+      var psnErr = "❌ Error: <code>"+pesanError+"</code>"
+      var keyb = []
+
+      keyb[0] = [
+        tg.button.text('👮 Report Error', 'sendError')
+      ]
+
+      user.setValue('bugError'+msg.chat.id, psnErr)
+
+      tg.sendMsgKeyboardInline(msg, psnErr, keyb, 'html', true)
     }
+    return;
+  }
 
     if (msg.video) {
       var fileid = msg.video.file_id;
@@ -223,11 +355,12 @@ function prosesPesan(update) {
       var pht = msg.video;
       var js = JSON.stringify(pht, null, 2);
 
+    try {
       var psn = "<code>" + js + "</code>"
       var pesan = "ℹ️ Information"
       pesan += "\n\n🆔 File ID: <code>" + fileid + "</code>"
       pesan += "\n🔰 Unique ID: <code>" + unique + "</code>"
-      pesan += "\n🗃 Size: <code>" + size + " KB</code>"
+      pesan += "\n🗃 Size: <code>" + size + " B</code>"
       pesan += "\n❇️ Duration: <code>" + dur + "</code>"
       pesan += "\n🗂 Type: <code>" + tp + "</code>"
       pesan += "\n📏 Width: <code>" + width + "</code>"
@@ -242,8 +375,26 @@ function prosesPesan(update) {
       user.setValue('json_vid' + msg.chat.id, js)
       user.setValue('vid_html' + msg.chat.id, pesan)
 
-      return tg.sendMessageKeyboardInline(msg.chat.id, psn, keyb, 'html', true, msg.message_id)
+      tg.sendMessageKeyboardInline(msg.chat.id, psn, keyb, 'html', true, msg.message_id)
+    } catch(e) {
+      var pesanError = e.message;
+
+      if (error = /({(?:.*)})/gmi.exec(pesanError))
+        pesanError = error[1];
+
+      var psnErr = "❌ Error: <code>"+pesanError+"</code>"
+      var keyb = []
+
+      keyb[0] = [
+        tg.button.text('👮 Report Error', 'sendError')
+      ]
+
+      user.setValue('bugError'+msg.chat.id, psnErr)
+
+      tg.sendMsgKeyboardInline(msg, psnErr, keyb, 'html', true)
     }
+    return;
+  }
 
     if (msg.animation) {
       var fileid = msg.animation.file_id;
@@ -256,11 +407,12 @@ function prosesPesan(update) {
       var pht = msg.animation;
       var js = JSON.stringify(pht, null, 2);
 
+    try {
       var psn = "<code>" + js + "</code>"
       var pesan = "ℹ️ Information"
       pesan += "\n\n🆔 File ID: <code>" + fileid + "</code>"
       pesan += "\n🔰 Unique ID: <code>" + unique + "</code>"
-      pesan += "\n🗃 Size: <code>" + size + " KB</code>"
+      pesan += "\n🗃 Size: <code>" + size + " B</code>"
       pesan += "\n❇️ Duration: <code>" + dur + "</code>"
       pesan += "\n🗂 Type: <code>" + fname + "</code>"
       pesan += "\n📏 Width: <code>" + width + "</code>"
@@ -275,8 +427,26 @@ function prosesPesan(update) {
       user.setValue('json_anim' + msg.chat.id, js)
       user.setValue('html_anim' + msg.chat.id, pesan)
 
-      return tg.sendMessageKeyboardInline(msg.chat.id, psn, keyb, 'html', true, msg.message_id)
+      tg.sendMessageKeyboardInline(msg.chat.id, psn, keyb, 'html', true, msg.message_id)
+    } catch(e) {
+      var pesanError = e.message;
+
+      if (error = /({(?:.*)})/gmi.exec(pesanError))
+        pesanError = error[1];
+
+      var psnErr = "❌ Error: <code>"+pesanError+"</code>"
+      var keyb = []
+
+      keyb[0] = [
+        tg.button.text('👮 Report Error', 'sendError')
+      ]
+
+      user.setValue('bugError'+msg.chat.id, psnErr)
+
+      tg.sendMsgKeyboardInline(msg, psnErr, keyb, 'html', true)
     }
+    return;
+  }
 
     if (msg.audio) {
       var fileid = msg.audio.file_id;
@@ -292,6 +462,7 @@ function prosesPesan(update) {
       var pht = msg.audio;
       var js = JSON.stringify(pht, null, 2);
 
+    try {
       var psn = "<code>" + js + "</code>"
       var pesan = "ℹ️ Information"
       pesan += "\n\n🆔 File ID: <code>" + fileid + "</code>"
@@ -299,7 +470,7 @@ function prosesPesan(update) {
       pesan += "\n🔖 File name: <code>" + fname + "</code>"
       pesan += "\n📝 Title: <code>" + title + "</code>"
       pesan += "\n🎛 Performer: <code>" + per + "</code>"
-      pesan += "\n🗃 Size: <code>" + size + " KB</code>"
+      pesan += "\n🗃 Size: <code>" + size + " B</code>"
       pesan += "\n❇️ Duration: <code>" + dur + "</code>"
       pesan += "\n🗂 Type: <code>" + tp + "</code>"
       var keyb = []
@@ -312,8 +483,26 @@ function prosesPesan(update) {
       user.setValue('json_aud' + msg.chat.id, js)
       user.setValue('html_aud' + msg.chat.id, pesan)
 
-      return tg.sendMessageKeyboardInline(msg.chat.id, psn, keyb, 'html', true, msg.message_id)
+      tg.sendMessageKeyboardInline(msg.chat.id, psn, keyb, 'html', true, msg.message_id)
+    } catch(e) {
+      var pesanError = e.message;
+
+      if (error = /({(?:.*)})/gmi.exec(pesanError))
+        pesanError = error[1];
+
+      var psnErr = "❌ Error: <code>"+pesanError+"</code>"
+      var keyb = []
+
+      keyb[0] = [
+        tg.button.text('👮 Report Error', 'sendError')
+      ]
+
+      user.setValue('bugError'+msg.chat.id, psnErr)
+
+      tg.sendMsgKeyboardInline(msg, psnErr, keyb, 'html', true)
     }
+    return;
+  }
 
     if (msg.voice) {
       var fileid = msg.voice.file_id;
@@ -324,11 +513,12 @@ function prosesPesan(update) {
       var pht = msg.voice;
       var js = JSON.stringify(pht, null, 2);
 
+    try {
       var psn = "<code>" + js + "</code>"
       var pesan = "ℹ️ Information"
       pesan += "\n\n🆔 File ID: <code>" + fileid + "</code>"
       pesan += "\n🔰 Unique ID: <code>" + unique + "</code>"
-      pesan += "\n🗃 Size: <code>" + size + " KB</code>"
+      pesan += "\n🗃 Size: <code>" + size + " B</code>"
       pesan += "\n❇️ Duration: <code>" + dur + "</code>"
       pesan += "\n🗂 Type: <code>" + tp + "</code>"
       var keyb = []
@@ -341,8 +531,26 @@ function prosesPesan(update) {
       user.setValue('json_voi' + msg.chat.id, js)
       user.setValue('html_voi' + msg.chat.id, pesan)
 
-      return tg.sendMessageKeyboardInline(msg.chat.id, psn, keyb, 'html', true, msg.message_id)
+      tg.sendMessageKeyboardInline(msg.chat.id, psn, keyb, 'html', true, msg.message_id)
+    } catch(e) {
+      var pesanError = e.message;
+
+      if (error = /({(?:.*)})/gmi.exec(pesanError))
+        pesanError = error[1];
+
+      var psnErr = "❌ Error: <code>"+pesanError+"</code>"
+      var keyb = []
+
+      keyb[0] = [
+        tg.button.text('👮 Report Error', 'sendError')
+      ]
+
+      user.setValue('bugError'+msg.chat.id, psnErr)
+
+      tg.sendMsgKeyboardInline(msg, psnErr, keyb, 'html', true)
     }
+    return;
+  }
 
     if (msg.dice) {
       var emoji = msg.dice.emoji;
@@ -350,6 +558,7 @@ function prosesPesan(update) {
       var pht = msg.dice;
       var js = JSON.stringify(pht, null, 2);
 
+    try {
       var psn = "<code>" + js + "</code>"
       var pesan = "ℹ️ Information"
       pesan += "\n\n👻 Emoji: <code>" + emoji + "</code>"
@@ -365,8 +574,26 @@ function prosesPesan(update) {
       user.setValue('json_dice' + msg.chat.id, js)
       user.setValue('html_dice' + msg.chat.id, pesan)
 
-      return tg.sendMessageKeyboardInline(msg.chat.id, psn, keyb, 'html', true, msg.message_id)
+      tg.sendMessageKeyboardInline(msg.chat.id, psn, keyb, 'html', true, msg.message_id)
+    } catch(e) {
+      var pesanError = e.message;
+
+      if (error = /({(?:.*)})/gmi.exec(pesanError))
+        pesanError = error[1];
+
+      var psnErr = "❌ Error: <code>"+pesanError+"</code>"
+      var keyb = []
+
+      keyb[0] = [
+        tg.button.text('👮 Report Error', 'sendError')
+      ]
+
+      user.setValue('bugError'+msg.chat.id, psnErr)
+
+      tg.sendMsgKeyboardInline(msg, psnErr, keyb, 'html', true)
     }
+    return;
+  }
 
     if (msg.document) {
       var fileid = msg.document.file_id;
@@ -379,13 +606,14 @@ function prosesPesan(update) {
       var pht = msg.document;
       var js = JSON.stringify(pht, null, 2);
 
+    try {
       var psn = "<code>" + js + "</code>"
       var pesan = "ℹ️ Information"
       pesan += "\n\n🆔 File ID: <code>" + fileid + "</code>"
       pesan += "\n🔰 Unique ID: <code>" + unique + "</code>"
       pesan += "\n🔖 File name: <code>" + fname + "</code>"
       pesan += "\n🗂 Type: <code>" + tp + "</code>"
-      pesan += "\n🗃 Size: <code>" + size + " KB</code>"
+      pesan += "\n🗃 Size: <code>" + size + " B</code>"
       var keyb = []
 
       keyb[0] = [
@@ -396,8 +624,26 @@ function prosesPesan(update) {
       user.setValue('json_doc' + msg.chat.id, js)
       user.setValue('html_doc' + msg.chat.id, pesan)
 
-      return tg.sendMessageKeyboardInline(msg.chat.id, psn, keyb, 'html', true, msg.message_id)
+      tg.sendMessageKeyboardInline(msg.chat.id, psn, keyb, 'html', true, msg.message_id)
+    } catch(e) {
+      var pesanError = e.message;
+
+      if (error = /({(?:.*)})/gmi.exec(pesanError))
+        pesanError = error[1];
+
+      var psnErr = "❌ Error: <code>"+pesanError+"</code>"
+      var keyb = []
+
+      keyb[0] = [
+        tg.button.text('👮 Report Error', 'sendError')
+      ]
+
+      user.setValue('bugError'+msg.chat.id, psnErr)
+
+      tg.sendMsgKeyboardInline(msg, psnErr, keyb, 'html', true)
     }
+    return;
+  }
 
     if (msg.game) {
       var title = msg.game.title;
@@ -408,6 +654,7 @@ function prosesPesan(update) {
       var pht = msg.game;
       var js = JSON.stringify(pht, null, 2);
 
+    try {
       var psn = "<code>" + js + "</code>"
       var pesan = "ℹ️ Information"
       pesan += "\n\n📝 Title: <code>" + title + "</code>"
@@ -426,8 +673,26 @@ function prosesPesan(update) {
       user.setValue('json_game' + msg.chat.id, js)
       user.setValue('html_game' + msg.chat.id, pesan)
 
-      return tg.sendMessageKeyboardInline(msg.chat.id, psn, keyb, 'html', true, msg.message_id)
+      tg.sendMessageKeyboardInline(msg.chat.id, psn, keyb, 'html', true, msg.message_id)
+    } catch(e) {
+      var pesanError = e.message;
+
+      if (error = /({(?:.*)})/gmi.exec(pesanError))
+        pesanError = error[1];
+
+      var psnErr = "❌ Error: <code>"+pesanError+"</code>"
+      var keyb = []
+
+      keyb[0] = [
+        tg.button.text('👮 Report Error', 'sendError')
+      ]
+
+      user.setValue('bugError'+msg.chat.id, psnErr)
+
+      tg.sendMsgKeyboardInline(msg, psnErr, keyb, 'html', true)
     }
+    return;
+  }
 
     if (msg.location) {
       var lat = msg.location.latitude;
@@ -437,6 +702,7 @@ function prosesPesan(update) {
       var pht = msg.location;
       var js = JSON.stringify(pht, null, 2);
 
+    try {
       var psn = "<code>" + js + "</code>"
       var pesan = "ℹ️ Information"
       pesan += "\n\n📝 Title: <code>" + title + "</code>"
@@ -457,8 +723,26 @@ function prosesPesan(update) {
       user.setValue('json_loc' + msg.chat.id, js)
       user.setValue('html_loc' + msg.chat.id, pesan)
 
-      return tg.sendMessageKeyboardInline(msg.chat.id, psn, keyb, 'html', true, msg.message_id)
+      tg.sendMessageKeyboardInline(msg.chat.id, psn, keyb, 'html', true, msg.message_id)
+    } catch(e) {
+      var pesanError = e.message;
+
+      if (error = /({(?:.*)})/gmi.exec(pesanError))
+        pesanError = error[1];
+
+      var psnErr = "❌ Error: <code>"+pesanError+"</code>"
+      var keyb = []
+
+      keyb[0] = [
+        tg.button.text('👮 Report Error', 'sendError')
+      ]
+
+      user.setValue('bugError'+msg.chat.id, psnErr)
+
+      tg.sendMsgKeyboardInline(msg, psnErr, keyb, 'html', true)
     }
+    return;
+  }
 
     if (msg.poll) {
       var poli = msg.poll.id;
@@ -472,6 +756,7 @@ function prosesPesan(update) {
       var pht = msg.poll;
       var js = JSON.stringify(pht, null, 2);
 
+    try {
       var psn = "<code>" + js + "</code>"
       var pesan = "ℹ️ Information"
       pesan += "\n\n🆔 Poll ID: <code>" + poli + "</code>"
@@ -492,8 +777,26 @@ function prosesPesan(update) {
       user.setValue('json_poll' + msg.chat.id, js)
       user.setValue('html_poll' + msg.chat.id, pesan)
 
-      return tg.sendMessageKeyboardInline(msg.chat.id, psn, keyb, 'html', true, msg.message_id)
+      tg.sendMessageKeyboardInline(msg.chat.id, psn, keyb, 'html', true, msg.message_id)
+    } catch(e) {
+      var pesanError = e.message;
+
+      if (error = /({(?:.*)})/gmi.exec(pesanError))
+        pesanError = error[1];
+
+      var psnErr = "❌ Error: <code>"+pesanError+"</code>"
+      var keyb = []
+
+      keyb[0] = [
+        tg.button.text('👮 Report Error', 'sendError')
+      ]
+
+      user.setValue('bugError'+msg.chat.id, psnErr)
+
+      tg.sendMsgKeyboardInline(msg, psnErr, keyb, 'html', true)
     }
+    return;
+  }
 
     if (msg.video_note) {
       var fileid = msg.video_note.file_id;
@@ -504,11 +807,12 @@ function prosesPesan(update) {
       var pht = msg.video_note;
       var js = JSON.stringify(pht, null, 2);
 
+    try {
       var psn = "<code>" + js + "</code>"
       var pesan = "ℹ️ Information"
       pesan += "\n\n🆔 File ID: <code>" + fileid + "</code>"
       pesan += "\n🔰 Unique ID: <code>" + unique + "</code>"
-      pesan += "\n🗃 Size: <code>" + size + " KB</code>"
+      pesan += "\n🗃 Size: <code>" + size + " B</code>"
       pesan += "\n❇️ Duration: <code>" + dur + "</code>"
       pesan += "\n🗂 Type: <code>video_note/mp4</code>"
       pesan += "\n📐 Length: <code>" + lg + "</code>"
@@ -522,9 +826,45 @@ function prosesPesan(update) {
       user.setValue('json_note' + msg.chat.id, js)
       user.setValue('html_note' + msg.chat.id, pesan)
 
-      return tg.sendMessageKeyboardInline(msg.chat.id, psn, keyb, 'html', true, msg.message_id)
-    }
+      tg.sendMessageKeyboardInline(msg.chat.id, psn, keyb, 'html', true, msg.message_id)
+    } catch(e) {
+      var pesanError = e.message;
 
-    // end of code
+      if (error = /({(?:.*)})/gmi.exec(pesanError))
+        pesanError = error[1];
+
+      var psnErr = "❌ Error: <code>"+pesanError+"</code>"
+      var keyb = []
+
+      keyb[0] = [
+        tg.button.text('👮 Report Error', 'sendError')
+      ]
+
+      user.setValue('bugError'+msg.chat.id, psnErr)
+
+      tg.sendMsgKeyboardInline(msg, psnErr, keyb, 'html', true)
+    }
+    return;
+  }
+
+  var chace = CacheService.getDocumentCache();
+
+  function rateLimit(options) {
+    return (msg,next) => {
+    let data = chache.get(msg.from.id)
+      if (data !== null) {
+        let count = Number(data)
+        count ++
+        chace.put(msg.from.id, count, options.time)
+        if (count > options.limit) {
+          return options.onlimit(msg)
+      }
+    }
+    if (data == null) chace.put(msg.from.id, 0, options.time)
+    return next()
+    }
+  }
+
+   // end of code
   }
 }
