@@ -46,13 +46,10 @@ function dayCon(UNIX_timestamp, ribuan) {
     a = new Date(UNIX_timestamp * 1000);
   }
 
-  //buat index bulan
-  var months = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  var hari = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-  // ambil pecahan waktu masing-masing
-  var day = months[a.getDay()];
+  var day = hari[a.getDay()];
 
-  // gabungkan ke dalam variable time
-  var time = day
-  return time;
+  var tgl = day
+  return tgl;
 }
