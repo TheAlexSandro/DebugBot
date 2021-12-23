@@ -1,4 +1,4 @@
-/******************* FUNCTION DATE *******************/
+/******************* FUNCTION GET DATE *******************/
 
 function dateCon(UNIX_timestamp, ribuan) {
   ribuan = (typeof ribuan == 'undefined') ? false : true;
@@ -18,7 +18,7 @@ function dateCon(UNIX_timestamp, ribuan) {
   return date;
 }
 
-/******************* FUNCTION TIME *******************/
+/******************* FUNCTION GET TIME *******************/
 
 function timeConverter(UNIX_timestamp, ribuan) {
   ribuan = (typeof ribuan == 'undefined') ? false : true;
@@ -33,5 +33,26 @@ function timeConverter(UNIX_timestamp, ribuan) {
   var sec = a.getSeconds();
 
   var time = hour + ':' + min + ':' + sec;
+  return time;
+}
+
+/******************* FUNCTION GET DAY *******************/
+
+function dayCon(UNIX_timestamp, ribuan) {
+  ribuan = (typeof ribuan == 'undefined') ? false : true;
+
+  let a = new Date(UNIX_timestamp);
+  if (ribuan) {
+    a = new Date(UNIX_timestamp * 1000);
+  }
+
+  //buat index bulan
+  var months = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+  // ambil pecahan waktu masing-masing
+  var day = months[a.getDay()];
+
+  // gabungkan ke dalam variable time
+  var time = day
   return time;
 }
