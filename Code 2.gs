@@ -98,6 +98,7 @@ function prosesPesan(update) {
         var pesan = "├──「 ℹ️ Information"
         pesan += "\n│"
         pesan += `\n├• 📆 Date: <code>${dateCon(msgr.date, true)}</code>`
+        pesan += `\n├• 🗒 Day: <code>${dayCon(msgr.date, true)}</code>`
         pesan += `\n├• 🕒 Time: <code>${timeConverter(msgr.date, true)}</code>`
         pesan += "\n├• 🆔 Message ID: <code>" + msgid + "</code>"
         pesan += "\n└• 📐 Character: <code>" + char + "</code>"
