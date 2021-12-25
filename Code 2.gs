@@ -167,22 +167,26 @@ function prosesPesan(update) {
 
     /**************************** AKHIR BAGIAN CEK ****************************/
     
-    var pola = /^\/history$/i
+    var pola = /^\/me$/i
     if (pola.exec(msg.text)) {
       var his = user.getValue('his_' + msg.chat.id)
-      var sender = msg.from
+      var userid = msg.from.id
+      var nn = msg.from.first_name;
+      if (msg.from.last_name) {
+        nn += " "+msg.from.last_name;
+      }
 
-      if (!his) return tg.sendMsg(msg, "⚠️ You don't have any history.", 'html', true)
+      if (!his) return tg.sendMsg(msg, "⚠️ You must send something to view information", 'html', true)
 
       var pesan = "ℹ️ Information"
-      pesan += "\n ├ 📇 ID: <code>" + sender.id + "</code>"
-      pesan += "\n └ 🧑 Name: <a href='tg://user?id=" + sender.id + "'>" + sender.first_name + "</a>"
+      pesan += "\n ├ 📇 ID: <code>" + userid + "</code>"
+      pesan += "\n └ 🧑 Name: <a href='tg://user?id=" + userid + "'>" + nn + "</a>"
       pesan += "\n\n📋 Your History"
       pesan += "\n └ <code>" + his + "</code>"
       var keyb = []
 
       keyb[0] = [
-        tg.button.text('❌ Clear', 'delHis')
+        tg.button.text('❌ Close', 'closeWindow')
       ]
 
       return tg.sendMsgKeyboardInline(msg, pesan, keyb, 'html', true)
