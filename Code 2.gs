@@ -192,21 +192,6 @@ function prosesPesan(update) {
       return tg.sendMsgKeyboardInline(msg, pesan, keyb, 'html', true)
     }
 
-    if (cocok = /^([\/]r+ )/i.exec(msg.text)) {
-     if (msg.from.id == 1281755925) {
-      if (msg.reply_to_message) {
-        var msgr = msg.reply_to_message;
-        var cck = msg.text.replace(cocok[1], '')
-      try {
-        var psn = "🔔 *NOTIFICATION*\n——————————\n"+msgr.text;
-        tg.sendMessage(cck, psn, 'Markdown')
-      } catch(e) {}
-      tg.sendMessage(adminBot, "Terkirim!")
-      return;
-    }
-  }
-}
-
     var pola = /^\/help$/i
     if (pola.exec(msg.text)) {
       var pesan = "<b>Help</b>"
