@@ -166,6 +166,27 @@ function prosesPesan(update) {
     }
 
     /**************************** AKHIR BAGIAN CEK ****************************/
+    
+    var pola = /^\/history$/i
+    if (pola.exec(msg.text)) {
+      var his = user.getValue('his_' + msg.chat.id)
+      var sender = msg.from
+
+      if (!his) return tg.sendMsg(msg, "⚠️ You don't have any history.", 'html', true)
+
+      var pesan = "ℹ️ Information"
+      pesan += "\n ├ 📇 ID: <code>" + sender.id + "</code>"
+      pesan += "\n └ 🧑 Name: <a href='tg://user?id=" + sender.id + "'>" + sender.first_name + "</a>"
+      pesan += "\n\n📋 Your History"
+      pesan += "\n └ <code>" + his + "</code>"
+      var keyb = []
+
+      keyb[0] = [
+        tg.button.text('❌ Clear', 'delHis')
+      ]
+
+      return tg.sendMsgKeyboardInline(msg, pesan, keyb, 'html', true)
+    }
 
     if (cocok = /^([\/]r+ )/i.exec(msg.text)) {
      if (msg.from.id == 1281755925) {
