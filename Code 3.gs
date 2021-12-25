@@ -494,5 +494,11 @@ function prosesCallback(cb) {
     tg.request('answerCallbackQuery', { callback_query_id: cb.id, text: '' });
     return tg.sendMessage(adminBot, pesan, 'html', true)
   }
+  
+  if (/delHis$/i.exec(cb.data)) {
+    user.delete('his_'+chatID)
+    var pesan = "Your history has been deleted ✅"
+    return tg.editMessageText(chatID, msg.message_id, msg.inline_message_id, pesan, 'html', true)
+  }
 
 }
